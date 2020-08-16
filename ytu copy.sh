@@ -1,27 +1,36 @@
+#!/bin/bash
 echo "Bandcamp url"
 read bcurl
 rm -rf cover.jpg
-rm -rf *.mp3
-rm -rf *.mp4
+rm -rf *.mp{3,4}
 rm -rf h.txt
 bandcamp-dl --template="%{track}" $bcurl
 echo -en 'ffmpeg -i "concat:' >> h.txt 
 for((var=1;var<99;++var)); do
-    if [[ $var -ge 1 && $var -le 5 ]]; then
+    case $var in
+        [1-5])
         sec=1
-    elif [[ $var -ge 6 && $var -le 10 ]]; then
+        ;;
+        [6-10])
         sec=2
-    elif [[ $var -ge 11 && $var -le 15 ]]; then
+        ;;
+        [11-15])
         sec=3
-    elif [[ $var -ge 16 && $var -le 20 ]]; then
+        ;;
+        [16-20])
         sec=4
-    elif [[ $var -ge 21 && $var -le 25 ]]; then
+        ;;
+        [21-25])
         sec=5
-    elif [[ $var -ge 61 && $var -le 30 ]]; then
+        ;;
+        [26-30])
         sec=6
-    elif [[ $var -ge 31 && $var -le 35 ]]; then
+        ;;
+        [31-35])
         sec=7
-    fi
+        ;;
+        *)
+    esac
     ffmpeg -loop 1 -i cover.jpg -i $(printf %02d $var).mp3 -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest $(printf %02d $var).mp4
     artist=`mediainfo --Inform='General;%Artist%'  $(printf %02d $var).mp3`
     track=`mediainfo --Inform='General;%Title%' $(printf %02d $var).mp3`
@@ -32,6 +41,7 @@ for((var=1;var<99;++var)); do
     if [ -e  $(printf %02d $var).mp4 ]; then
         echo -en "$(printf %02d $var).mp3|" >> h.txt
     else
+    fi
     artist=`mediainfo --Inform='General;%Artist%' 01.mp3`
     album=`mediainfo --Inform='General;%Album%'  01.mp3`
     echo -en '" -c copy all.mp3' >> h.txt
@@ -44,20 +54,29 @@ for((var=1;var<99;++var)); do
     rm -rf h.txt
     var=99
 	rm -rf cover.jpg
-    fi
-    if [ $var -eq 5 ]; then 
-        mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
-    elif [ $var -eq 10 ]; then 
-        mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
-    elif [ $var -eq 15 ]; then 
-        mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
-    elif [ $var -eq 20 ]; then
-        mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
-    elif [ $var -eq 25 ]; then  
-        mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
-    elif [ $var -eq 30 ]; then  
-        mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
-    elif [ $var -eq 35 ]; then  
-        mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
-    fi
+
+    case $var in
+    5)
+    mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
+    ;;
+    10)
+    mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
+    ;;
+    15)
+    mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
+    ;;
+    20)
+    mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
+    ;;
+    25)
+    mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
+    ;;
+    30)
+    mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
+    ;;
+    35)
+    mv -f ~/.youtube-upload-credentials.json cred$sec/.youtube-upload-credentials.json
+    ;;
+    *)
+    esac
 done
